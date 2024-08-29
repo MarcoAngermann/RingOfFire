@@ -10,4 +10,10 @@ import { Component } from '@angular/core';
 })
 export class GameComponent {
 
+  pickCardAnimation = false;
+
+  pickCard() {
+    this.pickCardAnimation = true;
+    console.log('picking card');
+  }
 }
