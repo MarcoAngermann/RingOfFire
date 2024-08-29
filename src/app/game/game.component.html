@@ -8,10 +8,16 @@
              alt="">
 
         <img (click)="pickCard()"
-             [class.pick-card]="pickCardAnimation"
              class="top-card"
              style="right: 25px"
              src="/assets/img/cards/card_cover.png"
+             alt="">
+
+             <img (click)="pickCard()"
+             *ngIf="pickCardAnimation"
+             class="pick-card"
+             style="right: 25px"
+             src="/assets/img/cards/spade_1.png"
              alt="">
       </div>
 
