@@ -4,20 +4,20 @@
         <img 
              *ngFor="let card of [0, 1, 2, 3]; let i = index;"
              [ngStyle]="{'right': i * 5 + 'px'}"
-             src="/assets/img/cards/card_cover.png"
+             src="/assets/img/cards/gray_back.png"
              alt="">
 
         <img (click)="pickCard()"
              class="top-card"
              style="right: 25px"
-             src="/assets/img/cards/card_cover.png"
+             src="/assets/img/cards/gray_back.png"
              alt="">
 
              <img (click)="pickCard()"
              *ngIf="pickCardAnimation"
              class="pick-card"
              style="right: 25px"
-             src="/assets/img/cards/spade_1.png"
+             src="/assets/img/cards/{{currentCard}}.png"
              alt="">
       </div>
 
