@@ -1,11 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Game } from '../../models/game';
+import { PlayerComponent } from "../player/player.component";
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PlayerComponent,MatIconModule,MatButtonModule],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss'
 })
@@ -14,7 +19,7 @@ export class GameComponent {
   currentCard: string = '';
   game: Game;
 
-  constructor() {
+  constructor(public dialog: MatDialog) {
     this.game = new Game();
     this.newGame();
   }
@@ -27,12 +32,27 @@ export class GameComponent {
     if (!this.pickCardAnimation) {
       this.currentCard = this.game.stack.pop() || '';
       this.pickCardAnimation = true;
-      console.log('picking card', this.currentCard);
+      
+      console.log('New card: ' + this.currentCard);
+      console.log('Game is', this.game);
   
       setTimeout(() => {
+        this.game.playedCards.push(this.currentCard);
         this.pickCardAnimation = false;
-      }, 1500);
+      }, 1000);
     }
     }
 
+
+    openDialog(): void {
+      const dialogRef = this.dialog.open(DialogAddPlayerComponent);
+    
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed');
+      });
+    }
+    
+
 }
+
+
