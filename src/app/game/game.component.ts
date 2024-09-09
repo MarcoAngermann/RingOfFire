@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { Game } from '../../models/game';
 import { PlayerComponent } from "../player/player.component";
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
 import { GameInfoComponent } from "../game-info/game-info.component";
+import { Firestore, collectionData, collection, addDoc, docData, doc , updateDoc } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -19,12 +22,38 @@ export class GameComponent {
   pickCardAnimation = false;
   currentCard: string = '';
   game: Game;
+  players: string[] = [];
+  stack: string[] = [];
+  playedCards: string[] = [];
+  games$!: Observable<Game[]>;
+  gameId: string | undefined;
 
-  constructor(public dialog: MatDialog) {
+  constructor(private route: ActivatedRoute,private firestore: Firestore , public dialog: MatDialog) {
     this.game = new Game();
     this.newGame();
   }
 
+  ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      const gameId = params['gameId']; // Extrahiere die gameId aus den Routenparametern
+      if (gameId) {
+        this.gameId = gameId;  // Setze die gameId
+        const gameDocRef = doc(this.firestore, 'games', gameId);
+        const gameData$ = docData(gameDocRef, { idField: 'id' }) as Observable<Game & { id: string }>;
+        gameData$.subscribe((game: Game & { id: string }) => {
+          if (game) {
+            this.game = game; // Spiel aus der Datenbank laden
+            this.players = game.players;
+            this.stack = game.stack;
+            this.playedCards = game.playedCards;
+          } 
+        });
+      } else {
+        console.error('No gameId found in route');
+      }
+    });
+  }
+  
   newGame() {
     this.game = new Game();
   }
@@ -33,20 +62,19 @@ export class GameComponent {
     if (!this.pickCardAnimation) {
       this.currentCard = this.game.stack.pop() || '';
       this.pickCardAnimation = true;
-      
       console.log('New card: ' + this.currentCard);
       console.log('Game is', this.game);
-
+      this.updateGame();
       this.game.currentPlayer++;
       this.game.currentPlayer %= this.game.players.length;
   
       setTimeout(() => {
         this.game.playedCards.push(this.currentCard);
         this.pickCardAnimation = false;
+        this.updateGame();
       }, 1000);
     }
     }
-
 
     openDialog(): void {
       const dialogRef = this.dialog.open(DialogAddPlayerComponent);
@@ -54,11 +82,35 @@ export class GameComponent {
       dialogRef.afterClosed().subscribe(name => {
         if(name && name.length > 0) {
           this.game.players.push(name);
+          this.updateGame();
         }
       });
     }
-    
 
-}
+    updateGame() {
+      if (this.gameId) {
+        const gameDocRef = doc(this.firestore, 'games', this.gameId);
+        const gameData = {
+          players: this.game.players,
+          stack: this.game.stack,
+          playedCards: this.game.playedCards,
+          currentPlayer: this.game.currentPlayer
+        };
+        const sanitizedData = JSON.parse(JSON.stringify(gameData));
+        updateDoc(gameDocRef, sanitizedData)
+          .then(() => {
+            console.log('Game updated successfully');
+          })
+          .catch((error) => {
+            console.error('Error updating game: ', error);
+          });
+      } else {
+        console.error('gameID is undefined. Cannot update game.');
+      }
+    }
+    
+    
+  }
+
 
 

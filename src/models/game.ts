@@ -13,7 +13,6 @@ export class Game {
         }
         shuffle(this.stack);
     }
-
 }
 
 export function shuffle<T>(array: T[]): T[] {

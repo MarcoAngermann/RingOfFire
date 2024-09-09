@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Firestore, collectionData, collection, addDoc, docData, doc } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { Game } from '../../models/game';
 
 @Component({
   selector: 'app-start-screen',
@@ -10,11 +13,26 @@ import { Router } from '@angular/router';
 })
 export class StartScreenComponent {
 
-constructor(private router: Router) { }
+constructor(private firestore: Firestore,private router: Router) { }
 
 newGame() {
-  this.router.navigateByUrl('/game');
+  const game = new Game();
+  const gameCollection = collection(this.firestore, 'games');
+
+  addDoc(gameCollection, { 
+    players: game.players, 
+    stack: game.stack, 
+    playedCards: game.playedCards 
+  })
+  .then((docRef) => {
+    console.log('Game created:', docRef.id);
+    this.router.navigateByUrl(`/game/${docRef.id}`);
+  })
+  .catch((error) => {
+    console.error('Error creating game: ', error);
+  });
+}
 }
 
 
-}
+
