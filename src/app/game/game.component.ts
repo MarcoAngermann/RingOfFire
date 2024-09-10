@@ -34,9 +34,9 @@ export class GameComponent {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      const gameId = params['gameId']; // Extrahiere die gameId aus den Routenparametern
+      const gameId = params['gameId']; 
       if (gameId) {
-        this.gameId = gameId;  // Setze die gameId
+        this.gameId = gameId; 
         const gameDocRef = doc(this.firestore, 'games', gameId);
         const gameData$ = docData(gameDocRef, { idField: 'id' }) as Observable<Game & { id: string }>;
         gameData$.subscribe((game: Game & { id: string }) => {
@@ -65,10 +65,8 @@ export class GameComponent {
       this.game.pickCardAnimation = true;
       console.log('New card: ' + this.game.currentCard);
       console.log('Game is', this.game);
-      this.updateGame();
       this.game.currentPlayer++;
       this.game.currentPlayer %= this.game.players.length;
-  
       setTimeout(() => {
         this.game.playedCards.push(this.game.currentCard);
         this.game.pickCardAnimation = false;
@@ -79,7 +77,6 @@ export class GameComponent {
 
     openDialog(): void {
       const dialogRef = this.dialog.open(DialogAddPlayerComponent);
-    
       dialogRef.afterClosed().subscribe(name => {
         if(name && name.length > 0) {
           this.game.players.push(name);
@@ -109,8 +106,6 @@ export class GameComponent {
         console.error('gameID is undefined. Cannot update game.');
       }
     }
-    
-    
   }
 
 
