@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
 import { GameInfoComponent } from "../game-info/game-info.component";
-import { Firestore, collectionData, collection, addDoc, docData, doc , updateDoc } from '@angular/fire/firestore';
+import { Firestore, docData, doc , updateDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
@@ -19,8 +19,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './game.component.scss'
 })
 export class GameComponent {
-  pickCardAnimation = false;
-  currentCard: string = '';
+
   game: Game;
   players: string[] = [];
   stack: string[] = [];
@@ -42,10 +41,12 @@ export class GameComponent {
         const gameData$ = docData(gameDocRef, { idField: 'id' }) as Observable<Game & { id: string }>;
         gameData$.subscribe((game: Game & { id: string }) => {
           if (game) {
-            this.game = game; // Spiel aus der Datenbank laden
+            this.game = game;
             this.players = game.players;
             this.stack = game.stack;
             this.playedCards = game.playedCards;
+            this.game.pickCardAnimation = game.pickCardAnimation;
+            this.game.currentCard = game.currentCard;
           } 
         });
       } else {
@@ -59,18 +60,18 @@ export class GameComponent {
   }
 
   pickCard() {
-    if (!this.pickCardAnimation) {
-      this.currentCard = this.game.stack.pop() || '';
-      this.pickCardAnimation = true;
-      console.log('New card: ' + this.currentCard);
+    if (!this.game.pickCardAnimation) {
+      this.game.currentCard = this.game.stack.pop() || '';
+      this.game.pickCardAnimation = true;
+      console.log('New card: ' + this.game.currentCard);
       console.log('Game is', this.game);
       this.updateGame();
       this.game.currentPlayer++;
       this.game.currentPlayer %= this.game.players.length;
   
       setTimeout(() => {
-        this.game.playedCards.push(this.currentCard);
-        this.pickCardAnimation = false;
+        this.game.playedCards.push(this.game.currentCard);
+        this.game.pickCardAnimation = false;
         this.updateGame();
       }, 1000);
     }
