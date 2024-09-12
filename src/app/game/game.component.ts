@@ -41,6 +41,12 @@ export class GameComponent {
         const gameData$ = docData(gameDocRef, { idField: 'id' }) as Observable<Game & { id: string }>;
         gameData$.subscribe((game: Game & { id: string }) => {
           if (game) {
+            if(this.game.currentCard !== game.currentCard) {
+              this.game.pickCardAnimation = true;
+              setTimeout(() => {
+                this.game.pickCardAnimation = false;
+              }, 1000);
+            }
             this.game = game;
             this.players = game.players;
             this.stack = game.stack;
@@ -92,7 +98,9 @@ export class GameComponent {
           players: this.game.players,
           stack: this.game.stack,
           playedCards: this.game.playedCards,
-          currentPlayer: this.game.currentPlayer
+          currentPlayer: this.game.currentPlayer,
+          currentCard: this.game.currentCard,
+          pickCardAnimation: this.game.pickCardAnimation,
         };
         const sanitizedData = JSON.parse(JSON.stringify(gameData));
         updateDoc(gameDocRef, sanitizedData)

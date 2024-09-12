@@ -41,7 +41,7 @@ export class GameInfoComponent implements OnChanges {
     { title: 'Quizmaster', description: '' },
     {
       title: 'Never have i ever...',
-      description:'Say something you nnever did. Everyone who did it has to drink.',
+      description:'Say something you never did. Everyone who did it has to drink.',
     },
     {
       title: 'Rule',
