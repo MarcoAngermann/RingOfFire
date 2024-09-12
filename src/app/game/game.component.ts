@@ -10,11 +10,12 @@ import { GameInfoComponent } from "../game-info/game-info.component";
 import { Firestore, docData, doc , updateDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { PlayerMobileComponent } from "../player-mobile/player-mobile.component";
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, PlayerComponent, MatIconModule, MatButtonModule, GameInfoComponent],
+  imports: [CommonModule, PlayerComponent, MatIconModule, MatButtonModule, GameInfoComponent, PlayerMobileComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.scss'
 })

@@ -1,6 +1,18 @@
 .game-info {
-    text-align: center;
     font-family: 'Roboto';
     background-color: rgba($color: #585858, $alpha: 0.5);
     color: whitesmoke;
+}
+
+mat-card {
+    @media (max-width: 720px) {
+        min-height: 120px;
+    }
+}
+
+mat-card-title {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    font-size: 36px;
 }

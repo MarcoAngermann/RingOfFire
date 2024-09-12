@@ -10,8 +10,6 @@ import {MatCardModule} from '@angular/material/card';
 })
 export class GameInfoComponent implements OnChanges {
   
-
-
   cardAction = [
     {
       title: 'Waterfall',
